@@ -43,8 +43,6 @@ func solve(filename string) (int, error) {
 	return depth * hori, nil
 }
 
-func solve2(filename) (int, error) {}
-
 func main() {
 	ans, err := solve("input.txt")
 	if err != nil {
