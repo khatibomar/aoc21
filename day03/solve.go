@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"strconv"
 )
 
-func solve(filename string) (int64, error) {
+func solve(filename string) (int, error) {
 	var s []int
 	var b []byte
 	var err error
@@ -43,8 +42,7 @@ func solve(filename string) (int64, error) {
 		}
 	}
 
-	var gamma, eps string
-	var ones, zeros int
+	var gamma, eps, ones, zeros int
 
 	for i := 0; i < width; i++ {
 		for j := 0; ; j += width {
@@ -57,19 +55,13 @@ func solve(filename string) (int64, error) {
 				zeros++
 			}
 		}
-		if major(zeros, ones) == 1 {
-			gamma += "1"
-			eps += "0"
-		} else {
-			gamma += "0"
-			eps += "1"
-		}
+		gamma = gamma<<1 + major(zeros, ones)
+		eps = eps<<1 + (1 - major(zeros, ones))
+
 		ones = 0
 		zeros = 0
 	}
-	g, _ := strconv.ParseInt(gamma, 2, 64)
-	e, _ := strconv.ParseInt(eps, 2, 64)
-	return g * e, nil
+	return gamma * eps, nil
 }
 
 func major(zeros, ones int) int {

@@ -7,7 +7,7 @@ import (
 func TestSolve1(t *testing.T) {
 	testCases := []struct {
 		input  string
-		expOut int64
+		expOut int
 		expErr error
 	}{
 		{"testdata/input.txt", 198, nil},
