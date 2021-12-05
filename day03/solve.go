@@ -66,23 +66,32 @@ func solve(filename string) (int, error) {
 }
 
 func solve2(filename string) (int, error) {
-	oxygen, err := calculate(filename, minorStr, '0', '1')
+	oxygen, err := calculate(filename, func(i1, i2 int) byte {
+		if i1 <= i2 {
+			return '0'
+		}
+		return '1'
+	})
 	if err != nil {
 		return -1, err
 	}
-	co2, err := calculate(filename, minorStr, '1', '0')
+	co2, err := calculate(filename, func(i1, i2 int) byte {
+		if i1 <= i2 {
+			return '1'
+		}
+		return '0'
+	})
 	if err != nil {
 		return -1, err
 	}
 	return oxygen * co2, nil
 }
 
-func calculate(filename string, minor func(int, int, byte, byte) byte, keep, discard byte) (int, error) {
+func calculate(filename string, minor func(int, int) byte) (int, error) {
 	lines, err := getLines(filename)
 	if err != nil {
 		return -1, err
 	}
-	width := len(lines[0])
 	var currWidth int
 	for len(lines) > 1 {
 		zeros := 0
@@ -96,7 +105,7 @@ func calculate(filename string, minor func(int, int, byte, byte) byte, keep, dis
 		}
 		i := 0
 		for len(lines) > 0 && i < len(lines) {
-			if lines[i][currWidth] == minor(zeros, ones, keep, discard) {
+			if lines[i][currWidth] == minor(zeros, ones) {
 				lines = append(lines[:i], lines[i+1:]...)
 				i = 0
 				continue
@@ -104,11 +113,10 @@ func calculate(filename string, minor func(int, int, byte, byte) byte, keep, dis
 			i++
 		}
 
-		currWidth = (currWidth + 1) % width
+		currWidth++
 	}
 	val, err := strconv.ParseInt(lines[0], 2, 64)
 	return int(val), err
-
 }
 
 func getLines(filename string) ([]string, error) {
@@ -132,13 +140,6 @@ func major(zeros, ones int) int {
 		return 0
 	}
 	return 1
-}
-
-func minorStr(zeros, ones int, keep, discard byte) byte {
-	if ones > zeros || zeros == ones {
-		return keep
-	}
-	return discard
 }
 
 func main() {
