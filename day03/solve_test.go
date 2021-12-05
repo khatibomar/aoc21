@@ -4,40 +4,26 @@ import (
 	"testing"
 )
 
-func TestSolve1(t *testing.T) {
+func TestSolve(t *testing.T) {
 	testCases := []struct {
+		name   string
 		input  string
 		expOut int
 		expErr error
+		solve  func(string) (int, error)
 	}{
-		{"testdata/input.txt", 198, nil},
+		{"Day03/part1", "testdata/input.txt", 198, nil, solve},
+		{"Day03/part2", "testdata/input.txt", 230, nil, solve2},
 	}
 	for _, tc := range testCases {
-		v, err := solve(tc.input)
-		if err != tc.expErr {
-			t.Fatalf("expected %s , got %s", tc.expErr, err)
-		}
-		if v != tc.expOut {
-			t.Fatalf("expected %d , got %d", tc.expOut, v)
-		}
-	}
-}
-
-func TestSolve2(t *testing.T) {
-	testCases := []struct {
-		input  string
-		expOut int
-		expErr error
-	}{
-		{"testdata/input.txt", 230, nil},
-	}
-	for _, tc := range testCases {
-		v, err := solve2(tc.input)
-		if err != tc.expErr {
-			t.Fatalf("expected %s , got %s", tc.expErr, err)
-		}
-		if v != tc.expOut {
-			t.Fatalf("expected %d , got %d", tc.expOut, v)
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			v, err := tc.solve(tc.input)
+			if err != tc.expErr {
+				t.Fatalf("expected %s , got %s", tc.expErr, err)
+			}
+			if v != tc.expOut {
+				t.Fatalf("expected %d , got %d", tc.expOut, v)
+			}
+		})
 	}
 }

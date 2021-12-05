@@ -12,8 +12,8 @@ func TestSolve(t *testing.T) {
 		expErr error
 		solve  func(string) (int, error)
 	}{
-		{"day02/part1", "testdata/input.txt", 150, nil, solve},
-		{"day02/part2", "testdata/input.txt", 900, nil, solve2},
+		{"day01/part1", "testdata/input.txt", 7, nil, solve},
+		{"day01/part2", "testdata/input.txt", 5, nil, solve2},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
