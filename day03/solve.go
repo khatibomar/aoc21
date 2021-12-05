@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 )
 
 func solve(filename string) (int, error) {
@@ -64,6 +65,68 @@ func solve(filename string) (int, error) {
 	return gamma * eps, nil
 }
 
+func solve2(filename string) (int, error) {
+	oxygen, err := calculate(filename, minorStr, '0', '1')
+	if err != nil {
+		return -1, err
+	}
+	co2, err := calculate(filename, minorStr, '1', '0')
+	if err != nil {
+		return -1, err
+	}
+	return oxygen * co2, nil
+}
+
+func calculate(filename string, minor func(int, int, byte, byte) byte, keep, discard byte) (int, error) {
+	lines, err := getLines(filename)
+	if err != nil {
+		return -1, err
+	}
+	width := len(lines[0])
+	var currWidth int
+	for len(lines) > 1 {
+		zeros := 0
+		ones := 0
+		for _, line := range lines {
+			if line[currWidth] == '0' {
+				zeros++
+			} else {
+				ones++
+			}
+		}
+		i := 0
+		for len(lines) > 0 && i < len(lines) {
+			if lines[i][currWidth] == minor(zeros, ones, keep, discard) {
+				lines = append(lines[:i], lines[i+1:]...)
+				i = 0
+				continue
+			}
+			i++
+		}
+
+		currWidth = (currWidth + 1) % width
+	}
+	val, err := strconv.ParseInt(lines[0], 2, 64)
+	return int(val), err
+
+}
+
+func getLines(filename string) ([]string, error) {
+	var lines []string
+	f, err := os.Open(filename)
+	if err != nil {
+		return lines, err
+	}
+	defer f.Close()
+	fs := bufio.NewScanner(f)
+
+	for fs.Scan() {
+		lines = append(lines, fs.Text())
+	}
+
+	return lines, nil
+}
+
 func major(zeros, ones int) int {
 	if zeros > ones {
 		return 0
@@ -71,9 +134,23 @@ func major(zeros, ones int) int {
 	return 1
 }
 
+func minorStr(zeros, ones int, keep, discard byte) byte {
+	if ones > zeros || zeros == ones {
+		return keep
+	}
+	return discard
+}
+
 func main() {
 	fmt.Println("---- [Part 01] ----")
 	ans, err := solve("input.txt")
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(ans)
+
+	fmt.Println("---- [Part 02] ----")
+	ans, err = solve2("input.txt")
 	if err != nil {
 		log.Println(err)
 	}
