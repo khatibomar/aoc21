@@ -41,25 +41,26 @@ type Game struct {
 
 // TODO(khatibomar): the board worth checking is the board
 // that have a column or row need 1 more value to be filled
-func (g Game) CheckWin() (Board, bool) {
+func (g Game) CheckWinBoards() []Board {
+	var winningBoards []Board
 	for _, board := range g.boards {
 		for i := 0; i < 5; i++ {
-			countZerosCol := 0
-			countZerosRow := 0
+			countCol := 0
+			countRow := 0
 			for j := 0; j < 5; j++ {
 				if board[i][j] == -1 {
-					countZerosRow++
+					countRow++
 				}
 				if board[j][i] == -1 {
-					countZerosCol++
+					countCol++
 				}
-				if countZerosCol == 5 || countZerosRow == 5 {
-					return board, true
+				if countCol == 5 || countRow == 5 {
+					winningBoards = append(winningBoards, board)
 				}
 			}
 		}
 	}
-	return *new(Board), false
+	return winningBoards
 }
 
 func (g *Game) DeleteBoard(board Board) {
@@ -81,9 +82,9 @@ func solve(filename string) (int, error) {
 		for i := 0; i < len(game.boards); i++ {
 			game.boards[i].Place(in)
 		}
-		winningBoard, ok := game.CheckWin()
-		if ok {
-			return winningBoard.Score(in), nil
+		winningBoards := game.CheckWinBoards()
+		if len(winningBoards) > 0 {
+			return winningBoards[0].Score(in), nil
 		}
 	}
 	return -1, nil
@@ -101,12 +102,12 @@ func solve2(filename string) (int, error) {
 		for i := 0; i < len(game.boards); i++ {
 			game.boards[i].Place(in)
 		}
-		for i := 0; i < len(game.boards); i++ {
-			winningBoard, ok := game.CheckWin()
-			if ok {
+		winningBoards := game.CheckWinBoards()
+		if len(winningBoards) > 0 {
+			for _, board := range winningBoards {
 				lastIn = in
-				lastWinningBaord = winningBoard
-				game.DeleteBoard(winningBoard)
+				lastWinningBaord = board
+				game.DeleteBoard(board)
 			}
 		}
 	}
