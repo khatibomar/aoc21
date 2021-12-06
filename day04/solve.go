@@ -62,6 +62,15 @@ func (g Game) CheckWin() (Board, bool) {
 	return *new(Board), false
 }
 
+func (g *Game) DeleteBoard(board Board) {
+	for i, b := range g.boards {
+		if b == board {
+			g.boards = append(g.boards[:i], g.boards[i+1:]...)
+			break
+		}
+	}
+}
+
 func solve(filename string) (int, error) {
 	game, err := initGame(filename)
 	if err != nil {
@@ -78,6 +87,30 @@ func solve(filename string) (int, error) {
 		}
 	}
 	return -1, nil
+}
+
+func solve2(filename string) (int, error) {
+	game, err := initGame(filename)
+	if err != nil {
+		fmt.Println(err)
+		return -1, nil
+	}
+	var lastWinningBaord Board
+	var lastIn int
+	for _, in := range game.input {
+		for i := 0; i < len(game.boards); i++ {
+			game.boards[i].Place(in)
+		}
+		for i := 0; i < len(game.boards); i++ {
+			winningBoard, ok := game.CheckWin()
+			if ok {
+				lastIn = in
+				lastWinningBaord = winningBoard
+				game.DeleteBoard(winningBoard)
+			}
+		}
+	}
+	return lastWinningBaord.Score(lastIn), nil
 }
 
 func initGame(filename string) (*Game, error) {
@@ -138,10 +171,10 @@ func main() {
 	}
 	fmt.Println(ans)
 
-	// fmt.Println("---- [Part 02] ----")
-	// ans, err = solve2("input.txt")
-	// if err != nil {
-	// 	log.Println(err)
-	// }
-	// fmt.Println(ans)
+	fmt.Println("---- [Part 02] ----")
+	ans, err = solve2("input.txt")
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(ans)
 }

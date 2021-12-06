@@ -14,6 +14,8 @@ func TestSolve(t *testing.T) {
 	}{
 		{"Day04/part1/input1", "testdata/input1.txt", 4512, nil, solve},
 		{"Day04/part1/input2", "testdata/input2.txt", 27027, nil, solve},
+		{"Day04/part2/input1", "testdata/input1.txt", 1924, nil, solve2},
+		{"Day04/part2/input2", "testdata/input2.txt", 36975, nil, solve2},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
