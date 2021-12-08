@@ -8,15 +8,17 @@ func TestSolve(t *testing.T) {
 	testCases := []struct {
 		name   string
 		input  string
-		expOut int
+		days   int
+		expOut int64
 		expErr error
-		solve  func(string) (int, error)
+		solve  func(string, int) (int64, error)
 	}{
-		{"day01/part1", "testdata/input.txt", 5934, nil, solve},
+		{"day06/part1", "testdata/input.txt", 80, 5934, nil, solve},
+		{"day06/part2", "testdata/input.txt", 256, 26984457539, nil, solve},
 	}
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			v, err := tc.solve(tc.input)
+			v, err := tc.solve(tc.input, tc.days)
 			if err != tc.expErr {
 				t.Fatalf("expected %s , got %s", tc.expErr, err)
 			}
