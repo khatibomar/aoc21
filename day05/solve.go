@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"log"
-	"math"
 	"os"
 )
 
@@ -67,7 +66,7 @@ func solve2(filename string) (int, error) {
 				grid[y1][i]++
 			}
 		} else {
-			if math.Abs(float64(y2-y1)) != math.Abs(float64(x2-x1)) {
+			if abs(y2-y1) != abs(x2-x1) {
 				continue
 			}
 
